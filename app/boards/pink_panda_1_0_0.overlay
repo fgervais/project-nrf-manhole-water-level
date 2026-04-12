@@ -1,0 +1,159 @@
+/ {
+	/*
+	* In some default configurations within the nRF Connect SDK,
+	* e.g. on nRF52840, the chosen zephyr,entropy node is &cryptocell.
+	* This devicetree overlay ensures that default is overridden wherever it
+	* is set, as this application uses the RNG node for entropy exclusively.
+	*/
+	chosen {
+		zephyr,entropy = &rng;
+	};
+
+	// edge_connector: connector {
+	// 	compatible = "nordic-thingy53-edge-connector";
+	// 	#gpio-cells = <2>;
+	// 	gpio-map-mask = <0xffffffff 0xffffffc0>;
+	// 	gpio-map-pass-thru = <0 0x3f>;
+	// 	gpio-map = <8 0 &gpio1 13 0>,	/* P8, P0.05/AIN1 */
+	// 		   <9 0 &gpio1 15 0>,	/* P9, P0.04/AIN0 */
+	// 		   <15 0 &gpio0 2 0>,	/* P15, P0.08/TRACEDATA3 */
+	// 		   <16 0 &gpio0 29 0>,	/* P16, P0.09/TRACEDATA2 */
+	// 		   <17 0 &gpio0 5 0>,	/* P17, P0.10/TRACEDATA1 */
+	// 		   <18 0 &gpio0 4 0>,	/* P18, P0.11/TRACEDATA0 */
+	// 		   <19 0 &gpio0 25 0>;	/* P19, P0.12/TRACECLK */
+	// };
+};
+&pinctrl {
+	// i2c0_default: i2c0_default {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(TWIM_SDA, 0, 26)>,
+	// 			<NRF_PSEL(TWIM_SCL, 0, 27)>;
+	// 	};
+	// };
+
+	// i2c0_sleep: i2c0_sleep {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(TWIM_SDA, 0, 26)>,
+	// 			<NRF_PSEL(TWIM_SCL, 0, 27)>;
+	// 		low-power-enable;
+	// 	};
+	// };
+
+	// i2c1_default: i2c1_default {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(TWIM_SDA, 0, 30)>,
+	// 			<NRF_PSEL(TWIM_SCL, 0, 31)>;
+	// 	};
+	// };
+
+	// i2c1_sleep: i2c1_sleep {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(TWIM_SDA, 0, 30)>,
+	// 			<NRF_PSEL(TWIM_SCL, 0, 31)>;
+	// 		low-power-enable;
+	// 	};
+	// };
+
+	// pwm0_default: pwm0_default {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(PWM_OUT0, 0, 8)>,
+	// 			<NRF_PSEL(PWM_OUT1, 1, 9)>,
+	// 			<NRF_PSEL(PWM_OUT2, 0, 12)>;
+	// 		nordic,invert;
+	// 	};
+	// };
+
+	// pwm0_sleep: pwm0_sleep {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(PWM_OUT0, 0, 8)>,
+	// 			<NRF_PSEL(PWM_OUT1, 1, 9)>,
+	// 			<NRF_PSEL(PWM_OUT2, 0, 12)>;
+	// 		low-power-enable;
+	// 	};
+	// };
+
+	// spi0_default: spi0_default {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(SPIM_SCK, 1, 10)>,
+	// 			<NRF_PSEL(SPIM_MOSI, 1, 14)>,
+	// 			<NRF_PSEL(SPIM_MISO, 0, 03)>;
+	// 	};
+	// };
+
+	// spi0_sleep: spi0_sleep {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(SPIM_SCK, 1, 10)>,
+	// 			<NRF_PSEL(SPIM_MOSI, 1, 14)>,
+	// 			<NRF_PSEL(SPIM_MISO, 0, 03)>;
+	// 		low-power-enable;
+	// 	};
+	// };
+
+	// spi1_default: spi1_default {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(SPIM_SCK, 0, 31)>,
+	// 			<NRF_PSEL(SPIM_MOSI, 0, 30)>,
+	// 			<NRF_PSEL(SPIM_MISO, 1, 13)>;
+	// 	};
+	// };
+
+	// spi1_sleep: spi1_sleep {
+	// 	group1 {
+	// 		psels = <NRF_PSEL(SPIM_SCK, 0, 31)>,
+	// 			<NRF_PSEL(SPIM_MOSI, 0, 30)>,
+	// 			<NRF_PSEL(SPIM_MISO, 1, 13)>;
+	// 		low-power-enable;
+	// 	};
+	// };
+
+};
+&adc {
+	status = "disabled";
+};
+&uart1 {
+	status = "disabled";
+};
+&pwm0 {
+	status = "disabled";
+};
+// &i2c0 {
+// 	status = "disabled";
+// };
+// &spi0 {
+// 	status = "disabled";
+// };
+// &spi1 {
+// 	status = "disabled";
+// };
+// &spi2 {
+// 	status = "disabled";
+// };
+// &spi3 {
+// 	status = "disabled";
+// };
+&qspi {
+	status = "disabled";
+};
+&usbd {
+	status = "disabled";
+};
+&gpio0 {
+	status = "okay";
+};
+&gpio1 {
+	status = "okay";
+};
+&gpiote {
+    status = "okay";
+};
+&ieee802154 {
+	status = "disabled";
+};
+// &edge_connector_spi {
+// 	// compatible = "nordic,nrf-spim";
+// 	status = "okay";
+// 	// cs-gpios = <&edge_connector 19 GPIO_ACTIVE_LOW>;
+// 	// pinctrl-0 = <&spi3_default>;
+// 	// pinctrl-1 = <&spi3_sleep>;
+// 	// pinctrl-names = "default", "sleep";
+// };
