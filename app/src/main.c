@@ -122,6 +122,7 @@ int main(void)
 #if defined(CONFIG_APP_SUSPEND_CONSOLE)
 	const struct device *cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 #endif
+	const struct device *const tof = DEVICE_DT_GET_ONE(st_vl53l0x);
 	int ret;
 	uint32_t reset_cause;
 	int main_wdt_chan_id = -1;
