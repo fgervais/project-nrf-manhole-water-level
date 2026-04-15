@@ -1,5 +1,7 @@
 #include <app_event_manager.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/drivers/sensor.h>
+#include <zephyr/drivers/sensor/vl53l0x.h>
 #include <zephyr/drivers/watchdog.h>
 #include <zephyr/kernel.h>
 #include <zephyr/net/wifi_mgmt.h>
@@ -128,6 +130,7 @@ int main(void)
 	int main_wdt_chan_id = -1;
 	uint32_t events;
 	uint32_t main_loop_counter = 0;
+	struct sensor_value value;
 
 	ret = watchdog_new_channel(wdt, &main_wdt_chan_id);
 	if (ret < 0) {
@@ -149,6 +152,11 @@ int main(void)
 		LOG_ERR("Event manager not initialized");
 	} else {
 		module_set_state(MODULE_STATE_READY);
+	}
+
+	if (!device_is_ready(tof)) {
+		LOG_ERR("vl53l0x not ready");
+		return 0;
 	}
 
 	ret = uid_init();
@@ -216,6 +224,37 @@ int main(void)
 
 		if ((main_loop_counter++ % 30) == 0) {
 			thread_analyzer_print(0);
+		}
+
+		ret = sensor_sample_fetch(tof);
+		if (ret) {
+			LOG_ERR("sensor_sample_fetch failed ret %d\n", ret);
+			return 0;
+		}
+
+		ret = sensor_channel_get(tof, SENSOR_CHAN_PROX, &value);
+		LOG_INF("prox is %d\n", value.val1);
+
+		ret = sensor_channel_get(tof, SENSOR_CHAN_DISTANCE, &value);
+		LOG_INF("distance is %.3lld mm\n", sensor_value_to_milli(&value));
+
+		ret = sensor_channel_get(tof, SENSOR_CHAN_VL53L0X_RANGE_DMAX, &value);
+		LOG_INF("Max distance is %.3lld mm\n", sensor_value_to_milli(&value));
+
+		ret = sensor_channel_get(tof, SENSOR_CHAN_VL53L0X_SIGNAL_RATE_RTN_CPS, &value);
+		LOG_INF("Signal rate is %d Cps\n", value.val1);
+
+		ret = sensor_channel_get(tof, SENSOR_CHAN_VL53L0X_AMBIENT_RATE_RTN_CPS, &value);
+		LOG_INF("Ambient rate is %d Cps\n", value.val1);
+
+		ret = sensor_channel_get(tof, SENSOR_CHAN_VL53L0X_EFFECTIVE_SPAD_RTN_COUNT, &value);
+		LOG_INF("SPADs used: %d\n", value.val1);
+
+		ret = sensor_channel_get(tof, SENSOR_CHAN_VL53L0X_RANGE_STATUS, &value);
+		if (value.val1 == VL53L0X_RANGE_STATUS_RANGE_VALID) {
+			LOG_INF("Status: OK\n");
+		} else {
+			LOG_INF("Status: Error code %d\n", value.val1);
 		}
 
 		LOG_INF("🦴 feed watchdog");
