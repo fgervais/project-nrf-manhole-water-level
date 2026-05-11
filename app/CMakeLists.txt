@@ -1,5 +1,5 @@
-# set(OVERLAY_CONFIG "secret.conf")
-set(OVERLAY_CONFIG "wifi.conf")
+list(APPEND OVERLAY_CONFIG "wifi.conf")
+list(APPEND OVERLAY_CONFIG "secret.conf")
 set(SHIELD nrf7002eb)
 
 cmake_minimum_required(VERSION 3.20.0)
