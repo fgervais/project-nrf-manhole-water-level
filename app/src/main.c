@@ -89,6 +89,7 @@ int main(void)
 	uint32_t reset_cause;
 	int main_wdt_chan_id = -1;
 	uint32_t events;
+	uint32_t main_loop_counter = 0;
 
 	ret = watchdog_new_channel(wdt, &main_wdt_chan_id);
 	if (ret < 0) {
@@ -156,6 +157,10 @@ int main(void)
 
 		if (events & BUTTON_PRESS_EVENT) {
 			LOG_INF("handling button press event");
+		}
+
+		if ((main_loop_counter++ % 30) == 0) {
+			thread_analyzer_print(0);
 		}
 
 		LOG_INF("🦴 feed watchdog");
