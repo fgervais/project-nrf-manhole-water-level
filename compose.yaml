@@ -1,6 +1,6 @@
 services:
   nrf:
-    image: zephyrprojectrtos/ci:v0.26.11
+    image: zephyrprojectrtos/ci:v0.28.5
     user: ${UID:-1000}:${GID:-1000}
     volumes:
       - ..:/workdir/project
