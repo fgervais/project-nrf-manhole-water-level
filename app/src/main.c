@@ -14,7 +14,9 @@
 LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
 #include <app_version.h>
+#include <mymodule/base/ha.h>
 #include <mymodule/base/reset.h>
+#include <mymodule/base/uid.h>
 #include <mymodule/base/watchdog.h>
 
 
@@ -33,6 +35,15 @@ static K_EVENT_DEFINE(button_events);
 static struct net_if *sta_iface;
 static struct wifi_connect_req_params sta_config;
 static struct net_mgmt_event_callback cb;
+
+static struct ha_sensor level_sensor = {
+	.type = HA_SENSOR_TYPE,
+	.name = "Water Level",
+	.device_class = "distance",
+	.state_class = "measurement",
+	.unit_of_measurement = "mm",
+	.suggested_display_precision = 2,
+};
 
 
 static void wifi_event_handler(struct net_mgmt_event_callback *cb, uint64_t mgmt_event,
@@ -114,6 +125,15 @@ int main(void)
 	}
 
 
+
+	ret = uid_generate_unique_id(level_sensor.unique_id,
+				     sizeof(level_sensor.unique_id),
+				     "nrf52840", "dst",
+				     uid_get_device_id());
+	if (ret < 0) {
+		LOG_ERR("Could not generate vl53l0x unique id");
+		return ret;
+	}
 
 
 	k_sleep(K_SECONDS(5));
