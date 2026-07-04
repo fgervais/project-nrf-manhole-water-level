@@ -124,7 +124,11 @@ int main(void)
 		module_set_state(MODULE_STATE_READY);
 	}
 
-
+	ret = uid_init();
+	if (ret < 0) {
+		LOG_ERR("Could not initialize uid module");
+		return ret;
+	}
 
 	ret = uid_generate_unique_id(level_sensor.unique_id,
 				     sizeof(level_sensor.unique_id),
@@ -136,7 +140,7 @@ int main(void)
 	}
 
 
-	k_sleep(K_SECONDS(5));
+	k_sleep(K_SECONDS(10));
 
 	// net_mgmt_init_event_callback(&cb, wifi_event_handler, NET_EVENT_WIFI_MASK);
 	// net_mgmt_add_event_callback(&cb);
@@ -146,8 +150,9 @@ int main(void)
 	// connect_to_wifi();
 
 
-
-
+	bool inhibit_discovery = false;
+	bool enable_last_will = true;
+	ha_start(inhibit_discovery, enable_last_will);
 
 
 	LOG_INF("🆗 initialized");
