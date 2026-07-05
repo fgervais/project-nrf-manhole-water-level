@@ -28,7 +28,7 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 	 NET_EVENT_WIFI_AP_ENABLE_RESULT | NET_EVENT_WIFI_AP_DISABLE_RESULT |                      \
 	 NET_EVENT_WIFI_AP_STA_CONNECTED | NET_EVENT_WIFI_AP_STA_DISCONNECTED)
 
-
+#define RETRY_DELAY_SECONDS		10
 
 static K_EVENT_DEFINE(button_events);
 
@@ -88,6 +88,32 @@ static int connect_to_wifi(void)
 	}
 
 	return ret;
+}
+
+static void register_sensor_retry(struct ha_sensor *sensor)
+{
+	int ret;
+
+retry:
+	ret = ha_register_sensor(sensor);
+	if (ret < 0) {
+		LOG_WRN("Could not register sensor, retrying");
+		k_sleep(K_SECONDS(RETRY_DELAY_SECONDS));
+		goto retry;
+	}
+}
+
+static void set_online_retry(void)
+{
+	int ret;
+
+retry:
+	ret = ha_set_online();
+	if (ret < 0) {
+		LOG_WRN("Could not set online, retrying");
+		k_sleep(K_SECONDS(RETRY_DELAY_SECONDS));
+		goto retry;
+	}
 }
 
 int main(void)
@@ -154,6 +180,9 @@ int main(void)
 	bool enable_last_will = true;
 	ha_start(inhibit_discovery, enable_last_will);
 
+	register_sensor_retry(&level_sensor);
+
+	set_online_retry();
 
 	LOG_INF("🆗 initialized");
 
