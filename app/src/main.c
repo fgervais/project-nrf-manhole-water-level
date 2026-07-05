@@ -174,7 +174,6 @@ int main(void)
 		return ret;
 	}
 
-
 	k_sleep(K_SECONDS(10));
 
 	// net_mgmt_init_event_callback(&cb, wifi_event_handler, NET_EVENT_WIFI_MASK);
@@ -233,28 +232,39 @@ int main(void)
 		}
 
 		ret = sensor_channel_get(tof, SENSOR_CHAN_PROX, &value);
-		LOG_INF("prox is %d\n", value.val1);
+		LOG_INF("prox is %d", value.val1);
 
 		ret = sensor_channel_get(tof, SENSOR_CHAN_DISTANCE, &value);
-		LOG_INF("distance is %.3lld mm\n", sensor_value_to_milli(&value));
+		LOG_INF("distance is %.3lld mm", sensor_value_to_milli(&value));
+
+		ha_add_sensor_reading(&level_sensor,
+				      sensor_value_to_milli(&value));
+
+		ret = ha_send_sensor_value(&level_sensor);
+		if (ret < 0) {
+			LOG_WRN("⚠️ could not send distance");
+		}
+
+
+
 
 		ret = sensor_channel_get(tof, SENSOR_CHAN_VL53L0X_RANGE_DMAX, &value);
-		LOG_INF("Max distance is %.3lld mm\n", sensor_value_to_milli(&value));
+		LOG_INF("Max distance is %.3lld mm", sensor_value_to_milli(&value));
 
 		ret = sensor_channel_get(tof, SENSOR_CHAN_VL53L0X_SIGNAL_RATE_RTN_CPS, &value);
-		LOG_INF("Signal rate is %d Cps\n", value.val1);
+		LOG_INF("Signal rate is %d Cps", value.val1);
 
 		ret = sensor_channel_get(tof, SENSOR_CHAN_VL53L0X_AMBIENT_RATE_RTN_CPS, &value);
-		LOG_INF("Ambient rate is %d Cps\n", value.val1);
+		LOG_INF("Ambient rate is %d Cps", value.val1);
 
 		ret = sensor_channel_get(tof, SENSOR_CHAN_VL53L0X_EFFECTIVE_SPAD_RTN_COUNT, &value);
-		LOG_INF("SPADs used: %d\n", value.val1);
+		LOG_INF("SPADs used: %d", value.val1);
 
 		ret = sensor_channel_get(tof, SENSOR_CHAN_VL53L0X_RANGE_STATUS, &value);
 		if (value.val1 == VL53L0X_RANGE_STATUS_RANGE_VALID) {
-			LOG_INF("Status: OK\n");
+			LOG_INF("Status: OK");
 		} else {
-			LOG_INF("Status: Error code %d\n", value.val1);
+			LOG_INF("Status: Error code %d", value.val1);
 		}
 
 		LOG_INF("🦴 feed watchdog");
